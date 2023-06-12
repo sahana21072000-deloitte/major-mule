@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:encdec-custom="http://www.mulesoft.org/schema/mule/encdec-custom"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/encdec-custom http://www.mulesoft.org/schema/mule/encdec-custom/current/mule-encdec-custom.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="69f4d8d5-b83f-49e2-8c57-215395878e83" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="c0891482-5f2e-49b3-85db-3ed51a7349c9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config2" doc:name="HTTP Listener config" doc:id="11265134-88d7-4803-a8be-6362564f2466" >
+		<http:listener-connection host="0.0.0.0" port="8080" />
+	</http:listener-config>
+	<flow name="encdec-customconnectorFlow1" doc:id="85010784-f6a6-40a9-8f83-e4a40a0cc703" >
+		<http:listener doc:name="Listener" doc:id="8c26ecc2-d9dc-4864-8f6d-e98b79915177" config-ref="HTTP_Listener_config2" path="/decrypt"/>
+		<encdec-custom:todecryption doc:name="Todecryption" doc:id="10d151eb-51c5-4b14-8ec5-3ce1697c16a2" message="#[payload.msg]" key="#[payload.key]"/>
+	</flow>
+	<flow name="encdec-customconnectorFlow" doc:id="e66d763d-9e93-4a52-b427-b5938c406b02" >
+		<http:listener doc:name="Listener" doc:id="5b965b83-1a17-4ec0-b39f-343b06d8a229" config-ref="HTTP_Listener_config" path="/enc"/>
+		<encdec-custom:toencryption doc:name="Toencryption" doc:id="3f8c1afc-67be-4d52-973a-d3f06d8d2908" message="#[payload.msg]"/>
+		<ee:transform doc:name="Transform Message" doc:id="814dc7ec-f7ab-4fb8-8fee-f247df8951dc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
